@@ -17,6 +17,14 @@
                  <f:expandableTextbox />
              </f:entry>
 
+            <f:entry title="on-online script" field="onOnlineScript">
+                <f:expandableTextbox />
+            </f:entry>
+
+            <f:entry title="on-offline script" field="onOfflineScript">
+                <f:expandableTextbox />
+            </f:entry>
+
              <f:entry title="deploy on save now" field="deployNow">
                  <f:checkbox />
              </f:entry>

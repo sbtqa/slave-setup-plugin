@@ -6,6 +6,7 @@ import hudson.model.Label;
 import hudson.model.Node;
 import hudson.model.TaskListener;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.slaves.OfflineCause;
 import hudson.tasks.Shell;
 import hudson.util.LogTaskListener;
 import jenkins.model.Jenkins;
@@ -204,6 +205,26 @@ public class SetupDeployer {
                         listener);
                 if (!successful) {
                     throw new AbortException("pre-launch script not executed successfully");
+                }
+            }
+        }
+    }
+
+    public void executeStateChangeScript(Computer c, SetupConfig config, TaskListener listener, boolean newState)
+            throws AbortException {
+        for (SetupConfigItem setupConfigItem : config.getSetupConfigItems()) {
+            String scriptItem = newState ? setupConfigItem.getOnOnlineScript() : setupConfigItem.getOnOfflineScript();
+            if (!StringUtils.isBlank(scriptItem) && checkLabels(c, setupConfigItem)) {
+                boolean successful = executeScriptOnMaster(
+                        scriptItem,
+                        c,
+                        listener);
+                if (!successful) {
+                    if (newState) {
+                        c.setTemporarilyOffline(true, new OfflineCause.LaunchFailed());
+                    }
+                    throw new AbortException("node-" + (newState ? "online" : "offline") +
+                            " script not executed successfully");
                 }
             }
         }

@@ -47,6 +47,16 @@ public class SetupConfigItem extends AbstractDescribableImpl<SetupConfigItem> {
     private String assignedLabelString;
 
     /**
+     * command line code to execute on master after slave agent got online
+     */
+    private String onOnlineScript;
+
+    /**
+     * command line code to execute on master after slave agent got offline
+     */
+    private String onOfflineScript;
+
+    /**
      * true if prepare script was executed successfully
      */
     private boolean prepareScriptExecuted = false;
@@ -56,13 +66,16 @@ public class SetupConfigItem extends AbstractDescribableImpl<SetupConfigItem> {
      *
      */
     @DataBoundConstructor
-    public SetupConfigItem(String preLaunchScript, String prepareScript, File filesDir, String commandLine, boolean deployNow, String assignedLabelString) {
+    public SetupConfigItem(String preLaunchScript, String prepareScript, File filesDir, String commandLine,
+                           boolean deployNow, String assignedLabelString, String onOnlineScript, String onOfflineScript) {
         this.preLaunchScript = preLaunchScript;
         this.prepareScript = prepareScript;
         this.filesDir = filesDir;
         this.commandLine = commandLine;
         this.deployNow = deployNow;
         this.assignedLabelString = assignedLabelString;
+        this.onOnlineScript = onOnlineScript;
+        this.onOfflineScript = onOfflineScript;
     }
 
     /**
@@ -95,6 +108,42 @@ public class SetupConfigItem extends AbstractDescribableImpl<SetupConfigItem> {
      */
     public void setPrepareScript(String prepareScript) {
         this.prepareScript = prepareScript;
+    }
+
+    /**
+     * Returns code of the script to execute after the node got online
+     *
+     * @return code to execute
+     */
+    public String getOnOnlineScript() {
+        return onOnlineScript;
+    }
+
+    /**
+     * Sets the node-online script code
+     *
+     * @param onOnlineScript code to execute
+     */
+    public void setOnOnlineScript(String onOnlineScript) {
+        this.onOnlineScript = onOnlineScript;
+    }
+
+    /**
+     * Returns code of the script to execute after the node got offline
+     *
+     * @return the script code
+     */
+    public String getOnOfflineScript() {
+        return onOfflineScript;
+    }
+
+    /**
+     * Sets the node-offline script code
+     *
+     * @param onOfflineScript code to execute
+     */
+    public void setOnOfflineScript(String onOfflineScript) {
+        this.onOfflineScript = onOfflineScript;
     }
 
     /**
