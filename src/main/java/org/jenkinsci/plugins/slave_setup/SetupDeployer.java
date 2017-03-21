@@ -51,10 +51,10 @@ public class SetupDeployer {
     }
 
     /**
-     * @param c        the computer to upload th files to
-     * @param root     the computer's target directory
+     * @param c the computer to upload th files to
+     * @param root the computer's target directory
      * @param listener the listener for logging etc.
-     * @param config   the SetupConfig object containing the all SetupConfigItems
+     * @param config the SetupConfig object containing the all SetupConfigItems
      * @throws IOException
      * @throws InterruptedException
      */
@@ -67,9 +67,9 @@ public class SetupDeployer {
     }
 
     /**
-     * @param c               the computer to upload th files to
-     * @param root            the computer's target directory
-     * @param listener        the listener for logging etc.
+     * @param c the computer to upload th files to
+     * @param root the computer's target directory
+     * @param listener the listener for logging etc.
      * @param setupConfigItem the SetupConfigItem object containing the source dir and the command line
      * @throws IOException
      * @throws InterruptedException
@@ -111,7 +111,7 @@ public class SetupDeployer {
     /**
      * Returns true if the given setup config item is responsible for the given slave computer.
      *
-     * @param c               the slave computer
+     * @param c the slave computer
      * @param setupConfigItem the setup config item to check
      * @return true if the given setup config item is responsible for the given slave computer
      */
@@ -146,7 +146,7 @@ public class SetupDeployer {
     }
 
     /**
-     * @param computerList    the list of computers to upload the setup files and execute command line
+     * @param computerList the list of computers to upload the setup files and execute command line
      * @param setupConfigItem the SetupConfigItem object
      */
     public void deployToComputers(List<Computer> computerList, SetupConfigItem setupConfigItem) {
@@ -165,7 +165,7 @@ public class SetupDeployer {
 
     /**
      * @param computerList the list of computers to upload the setup files and execute command line
-     * @param config       the SetupConfig object
+     * @param config the SetupConfig object
      */
     public void deployToComputers(List<Computer> computerList, SetupConfig config) {
         for (Computer computer : computerList) {
@@ -213,7 +213,9 @@ public class SetupDeployer {
     public void executeStateChangeScript(Computer c, SetupConfig config, TaskListener listener, boolean newState)
             throws AbortException {
         for (SetupConfigItem setupConfigItem : config.getSetupConfigItems()) {
-            String scriptItem = newState ? setupConfigItem.getOnOnlineScript() : setupConfigItem.getOnOfflineScript();
+            String scriptItem = "";
+            if (newState && c.isOnline()) scriptItem = setupConfigItem.getOnOnlineScript();
+            if (newState && c.isOffline()) scriptItem = setupConfigItem.getOnOfflineScript();
             if (!StringUtils.isBlank(scriptItem) && checkLabels(c, setupConfigItem)) {
                 boolean successful = executeScriptOnMaster(
                         scriptItem,
