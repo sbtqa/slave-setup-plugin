@@ -91,13 +91,14 @@ public class ComputerListenerImpl extends ComputerListener {
      */
     @Override
     public void onOffline(Computer c) {
-        TaskListener listener = new LogTaskListener(LOGGER, Level.ALL);
+
+        TaskListener listener = new LogTaskListener(LOGGER, Level.INFO);
         listener.getLogger().println("right after slave " + c.getName() + " got offline ...");
         SetupConfig config = SetupConfig.get();
         try {
             deployer.executeStateChangeScript(c, config, listener, false);
         } catch (AbortException e) {
-            listener.getLogger().println("node-offline script have failed to execute");
+            listener.getLogger().println("node-offline script have failed to execute for" + c.getName());
         }
     }
 }
