@@ -210,22 +210,20 @@ public class SetupDeployer {
         }
     }
 
-    public void executeStateChangeScript(Computer c, SetupConfig config, TaskListener listener, boolean newState)
+    public void executeStateChangeScript(Computer c, SetupConfig config, TaskListener listener, boolean online)
             throws AbortException {
         for (SetupConfigItem setupConfigItem : config.getSetupConfigItems()) {
-            String scriptItem = "";
-            if (newState && c.isOnline()) scriptItem = setupConfigItem.getOnOnlineScript();
-            if (newState && c.isOffline()) scriptItem = setupConfigItem.getOnOfflineScript();
+            String scriptItem = online ? setupConfigItem.getOnOnlineScript() : setupConfigItem.getOnOfflineScript();
             if (!StringUtils.isBlank(scriptItem) && checkLabels(c, setupConfigItem)) {
                 boolean successful = executeScriptOnMaster(
                         scriptItem,
                         c,
                         listener);
                 if (!successful) {
-                    if (newState) {
+                    if (online) {
                         c.setTemporarilyOffline(true, new OfflineCause.LaunchFailed());
                     }
-                    throw new AbortException("node-" + (newState ? "online" : "offline") +
+                    throw new AbortException("node-" + (online ? "online" : "offline") +
                             " script not executed successfully");
                 }
             }
