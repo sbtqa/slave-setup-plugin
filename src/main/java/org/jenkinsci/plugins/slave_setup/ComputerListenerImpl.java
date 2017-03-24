@@ -7,6 +7,7 @@ import hudson.model.Computer;
 import hudson.model.TaskListener;
 import hudson.remoting.Channel;
 import hudson.slaves.ComputerListener;
+import hudson.slaves.OfflineCause;
 import hudson.util.LogTaskListener;
 import jenkins.model.Jenkins;
 
@@ -90,8 +91,25 @@ public class ComputerListenerImpl extends ComputerListener {
      * @param c the computer to execute actions for
      */
     @Override
-    public void onOffline(Computer c) {
+    public void onOffline(Computer c, OfflineCause cause) {
+        onOfflineAction(c);
+        super.onOffline(c, cause);
+    }
 
+    /**
+     * Performs actions, required to be done after slave disconnection. Use this to roll back actions done by
+     * {@link #onOnline(hudson.model.Computer, hudson.model.TaskListener)}.
+     *
+     * @param c the computer to execute actions for
+     * @deprecated
+     */
+    @Override
+    public void onOffline(Computer c) {
+        onOfflineAction(c);
+        super.onOffline(c);
+    }
+
+    private void onOfflineAction(Computer c) {
         TaskListener listener = new LogTaskListener(LOGGER, Level.INFO);
         listener.getLogger().println("right after slave " + c.getName() + " got offline ...");
         SetupConfig config = SetupConfig.get();

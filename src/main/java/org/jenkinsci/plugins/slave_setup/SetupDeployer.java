@@ -150,17 +150,7 @@ public class SetupDeployer {
      * @param setupConfigItem the SetupConfigItem object
      */
     public void deployToComputers(List<Computer> computerList, SetupConfigItem setupConfigItem) {
-        for (Computer computer : computerList) {
-            try {
-                FilePath root = computer.getNode().getRootPath();
-                LogTaskListener listener = new LogTaskListener(LOGGER, Level.ALL);
-                deployToComputer(computer, root, listener, setupConfigItem);
-            } catch (IOException e) {
-                LOGGER.severe(e.getMessage());
-            } catch (InterruptedException e) {
-                LOGGER.severe(e.getMessage());
-            }
-        }
+        deploy(computerList, setupConfigItem);
     }
 
     /**
@@ -168,17 +158,7 @@ public class SetupDeployer {
      * @param config the SetupConfig object
      */
     public void deployToComputers(List<Computer> computerList, SetupConfig config) {
-        for (Computer computer : computerList) {
-            try {
-                FilePath root = computer.getNode().getRootPath();
-                LogTaskListener listener = new LogTaskListener(LOGGER, Level.ALL);
-                deployToComputer(computer, root, listener, config);
-            } catch (IOException e) {
-                LOGGER.severe(e.getMessage());
-            } catch (InterruptedException e) {
-                LOGGER.severe(e.getMessage());
-            }
-        }
+        deploy(computerList, config);
     }
 
     public void executePrepareScripts(Computer c, SetupConfig config, TaskListener listener) {
@@ -274,6 +254,24 @@ public class SetupDeployer {
         }
         envVars.putAll(additionalEnvironment);
         return envVars;
+    }
+
+    private void deploy(List<Computer> computerList, Object config) {
+        for (Computer computer : computerList) {
+            try {
+                FilePath root = computer.getNode().getRootPath();
+                LogTaskListener listener = new LogTaskListener(LOGGER, Level.ALL);
+                if (config instanceof SetupConfig) {
+                    deployToComputer(computer, root, listener, (SetupConfig) config);
+                } else {
+                    deployToComputer(computer, root, listener, (SetupConfigItem) config);
+                }
+            } catch (IOException e) {
+                LOGGER.severe(e.getMessage());
+            } catch (InterruptedException e) {
+                LOGGER.severe(e.getMessage());
+            }
+        }
     }
 
 
